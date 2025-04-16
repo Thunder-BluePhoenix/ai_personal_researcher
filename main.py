@@ -1,10 +1,9 @@
-# main.py
+# main.py (with interactive input)
 import os
 import asyncio
-import nest_asyncio  # Add this import
+import nest_asyncio
 from dotenv import load_dotenv
 from graph.workflow import agent_graph
-import json
 
 # Apply nest_asyncio to prevent event loop errors
 nest_asyncio.apply()
@@ -37,9 +36,12 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
-    # Run the research workflow
-    research_query = "What are the most sustainable solar panels in 2025?"
+    # Get user input interactively
+    research_query = input("Enter your research question: ")
+    
     try:
+        print(f"\nResearching: {research_query}\n")
+        print("This may take a few minutes...\n")
         report = loop.run_until_complete(run_research_workflow(research_query))
         print("\n=== FINAL REPORT ===\n")
         print(report)

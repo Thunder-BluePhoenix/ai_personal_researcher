@@ -32,10 +32,15 @@ def create_agent_workflow():
     
     # Add nodes
     workflow.add_node("researcher", researcher.run)
+    print("Researcher agent initialized.")
     workflow.add_node("summarizer", summarizer.run)
+    print("Summarizer agent initialized.")
     workflow.add_node("fact_checker", fact_checker.run)
+    print("Fact Checker agent initialized.")
     workflow.add_node("advisor", advisor.run)
+    print("Advisor agent initialized.")
     workflow.add_node("reporter", reporter.run)
+    print("Reporter agent initialized.")
     
     # Define edges
     workflow.add_edge("researcher", "summarizer")

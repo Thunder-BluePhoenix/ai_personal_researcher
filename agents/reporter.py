@@ -30,5 +30,5 @@ class ReporterAgent:
         
         return {
             **state,
-            "final_report": result["output"]
+            "final_report": result
         }
