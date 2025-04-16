@@ -34,20 +34,76 @@ if st.button("Run Research"):
         st.markdown("## Research Report")
         st.markdown(report)
         
-        # Optional: Add a download button for the report
+        # Ensure report is a string before downloading
+        if isinstance(report, dict):
+            report_text = str(report)  # Convert dict to string
+        else:
+            report_text = report
+            
+        # Now use report_text for the download button
         st.download_button(
             label="Download Report",
-            data=report,
+            data=report_text,
             file_name="research_report.md",
             mime="text/markdown",
         )
 
-# Visualize agent graph
+# Updated visualization section for LangGraph 0.3.30
 with st.expander("View Agent Interaction Graph"):
     try:
-        from graph.workflow import create_agent_workflow
-        workflow = create_agent_workflow()
-        dot_graph = workflow.get_graph().draw_graphviz()
-        st.graphviz_chart(dot_graph)
+        import graphviz
+        
+        # Create a manual representation of the agent workflow
+        dot = graphviz.Digraph()
+        dot.attr(rankdir='LR')  # Left to right layout
+        
+        # Define nodes - this is the fixed structure of your agent network
+        nodes = ["researcher", "summarizer", "fact_checker", "advisor", "reporter", "END"]
+        
+        # Define edges - this is the flow between agents
+        edges = [
+            ("researcher", "summarizer"),
+            ("summarizer", "fact_checker"),
+            ("fact_checker", "researcher", "confidence < 0.7"),
+            ("fact_checker", "advisor", "confidence >= 0.7"),
+            ("advisor", "reporter"),
+            ("reporter", "END")
+        ]
+        
+        # Add nodes to graph
+        for node in nodes:
+            if node == "researcher":  # Entry point
+                dot.node(node, node, style='filled', fillcolor='lightblue')
+            elif node == "END":
+                dot.node(node, node, shape="doublecircle")
+            else:
+                dot.node(node, node)
+        
+        # Add edges to graph
+        for edge in edges:
+            if len(edge) == 2:  # Simple edge
+                dot.edge(edge[0], edge[1])
+            else:  # Edge with condition
+                dot.edge(edge[0], edge[1], label=edge[2])
+        
+        # Display the graph
+        st.graphviz_chart(dot)
+        
     except Exception as e:
         st.error(f"Could not generate graph visualization: {str(e)}")
+        st.error("You may need to install graphviz: pip install graphviz")
+        
+        # Provide a text representation as fallback
+        st.markdown("""
+        # Agent Interaction Network
+        
+        ## Agent Flow
+        
+        1. **Researcher** → Searches for information on the query topic
+        2. **Summarizer** → Condenses research into key points
+        3. **Fact Checker** → Verifies information and assigns confidence
+           - If confidence < 0.7: Return to Researcher
+           - If confidence ≥ 0.7: Proceed to Advisor
+        4. **Advisor** → Provides recommendations based on verified information
+        5. **Reporter** → Compiles final comprehensive report
+        """)

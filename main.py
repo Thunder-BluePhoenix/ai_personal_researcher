@@ -1,7 +1,7 @@
-# main.py (with interactive input)
+# main.py
 import os
 import asyncio
-import nest_asyncio
+import nest_asyncio  # Add this import
 from dotenv import load_dotenv
 from graph.workflow import agent_graph
 
@@ -30,21 +30,26 @@ async def run_research_workflow(query):
         print(f"Error in research workflow: {str(e)}")
         return f"Research workflow failed with error: {str(e)}"
 
-# Example usage
+# Interactive usage
 if __name__ == "__main__":
     # Create a new event loop
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
-    # Get user input interactively
-    research_query = input("Enter your research question: ")
-    
     try:
-        print(f"\nResearching: {research_query}\n")
-        print("This may take a few minutes...\n")
-        report = loop.run_until_complete(run_research_workflow(research_query))
-        print("\n=== FINAL REPORT ===\n")
-        print(report)
+        while True:
+            # Get user input interactively
+            research_query = input("\nEnter your research question (or 'exit' to quit): ")
+            
+            if research_query.lower() == 'exit':
+                break
+                
+            print(f"\nResearching: {research_query}\n")
+            print("This may take a few minutes...\n")
+            
+            report = loop.run_until_complete(run_research_workflow(research_query))
+            print("\n=== FINAL REPORT ===\n")
+            print(report)
     finally:
         # Close the loop properly
         loop.close()
