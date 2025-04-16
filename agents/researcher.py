@@ -1,4 +1,5 @@
 # agents/researcher.py
+import os
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_core.tools import BaseTool
@@ -8,7 +9,7 @@ import json
 
 class ResearcherAgent:
     def __init__(self, llm=None):
-        self.llm = llm or ChatOpenAI(model="gpt-4", temperature=0)
+        self.llm = llm or ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
         self.tools = [create_search_tool(), create_web_loader_tool()]
         self.agent = create_react_agent(
             llm=self.llm,
@@ -38,4 +39,3 @@ class ResearcherAgent:
             if "http" in line:
                 sources.append(line.strip())
         return sources
-    

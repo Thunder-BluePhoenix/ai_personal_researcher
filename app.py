@@ -42,15 +42,12 @@ if st.button("Run Research"):
             mime="text/markdown",
         )
 
-
-# app.py (add this function)
-def visualize_agent_graph():
-    """Generate and display the agent interaction graph."""
-    from graph.workflow import workflow
-    
-    dot_graph = workflow.get_graph().draw_graphviz()
-    st.graphviz_chart(dot_graph)
-
-# Then call it in your app
+# Visualize agent graph
 with st.expander("View Agent Interaction Graph"):
-    visualize_agent_graph()
+    try:
+        from graph.workflow import create_agent_workflow
+        workflow = create_agent_workflow()
+        dot_graph = workflow.get_graph().draw_graphviz()
+        st.graphviz_chart(dot_graph)
+    except Exception as e:
+        st.error(f"Could not generate graph visualization: {str(e)}")

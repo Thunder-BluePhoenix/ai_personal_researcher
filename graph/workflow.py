@@ -42,7 +42,7 @@ def create_agent_workflow():
     
     # Conditional edge: if confidence is low, go back to researcher
     def route_after_fact_check(state):
-        if state["confidence"] < 0.7:
+        if not state.get("confidence") or state.get("confidence", 0) < 0.7:
             return "researcher"
         return "advisor"
     
